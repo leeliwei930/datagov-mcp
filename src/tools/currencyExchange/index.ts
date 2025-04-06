@@ -93,6 +93,10 @@ const currencyConverterTool: McpServerTool = {
 					{
 						type: "text",
 						text: result,
+					},
+					{
+						type: "text",
+						text: `Exchange rate of ${exchangeKey}, ${exchangeRate}`
 					}
 				]
 			}

@@ -51,3 +51,12 @@ node ./build/index.js
 
 - Currency conversion based on historical exchange rate data
 
+## Screenshots
+
+### Prompt example
+![sample-chat](./docs//assets/currency-convert-sample-chat.png)
+
+
+### Screenshot of a Citation from the converter tool output
+![sample-citation](./docs/assets/currency-converter-tool-citation.png)
+
