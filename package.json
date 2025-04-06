@@ -1,0 +1,30 @@
+{
+  "name": "datagov-mcp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && chmod 755 build/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.8.0",
+    "numbro": "^2.5.0",
+    "underscore": "^1.13.7",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@types/underscore": "^1.13.0",
+    "typescript": "^5.8.3"
+  },
+  "bin": {
+    "datagov-mcp-server": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ]
+}
