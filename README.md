@@ -1,4 +1,4 @@
-# DataGov MCP Server
+# DataGovMy MCP Server
 
 ## Overview
 This repository contains the Model Control Protocol (MCP) server implementation for DataGov MY services.
@@ -12,8 +12,8 @@ This repository contains the Model Control Protocol (MCP) server implementation 
 Clone the repository and install dependencies:
 
 ```bash
-git clone <repository-url>
-cd datagov-mcp
+git clone git@github.com:leeliwei930/datagovmy-mcp.git
+cd datagovmy-mcp
 npm install
 ```
 
@@ -47,4 +47,7 @@ node ./build/index.js
 
 ![OpenWebUI MCP Configuration](./docs/assets/openwebui-mcp-config.png)
 
+## Current available tools in MCP server
+
+- Currency conversion based on historical exchange rate data
 
