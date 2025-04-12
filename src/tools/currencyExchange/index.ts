@@ -2,8 +2,9 @@
 import { ToolCallback } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js"
 import { z, ZodRawShape } from "zod"
-import foreignExchangeRepo from "../../repositories/foreignExchange/index.js";
+import foreignExchangeRepo from "../../repositories/foreignExchange/index.js"
 import { formatCurrecy } from '../../utils/index.js'
+import _ from 'underscore'
 
 interface McpServerTool {
 	name: string,
@@ -14,10 +15,10 @@ interface McpServerTool {
 
 
 const currencyExchangeToolParams = {
-	date: z.string().describe("The date formatted in YYYY-MM-DD"),
-	sourceCurrency: z.string().length(3).describe(`The conversion of the source currency, three digits code eg (MYR, SGD, USD)`),
-	targetCurrency: z.string().length(3).describe(`The target currency that convert from source currency, three digits code eg (MYR, SGD, USD)`),
-	amount: z.number().describe("The given amount in number"),
+	date: z.string().describe("Date in YYYY-MM-DD format used to query getMYRToForeignCurrencyByDate resource"),
+	sourceCurrency: z.string().length(3).describe(`Three-letter currency code of the source currency (e.g., MYR, SGD, USD)`),
+	targetCurrency: z.string().length(3).describe(`Three-letter currency code of the target currency for conversion (e.g., MYR, SGD, USD)`),
+	amount: z.number().describe("Amount to convert"),
 }
 
 const currencyConverterTool: McpServerTool = {
@@ -29,12 +30,11 @@ const currencyConverterTool: McpServerTool = {
 
 		const paramsSchema = z.object(currencyExchangeToolParams)
 		const parsedParams = paramsSchema.parse(cbParams)
-		const dataStore = await foreignExchangeRepo.getExchangeRateData(URL.parse("https://api.data.gov.my/data-catalogue/?id=exchangerates")!)
 
 
+		const inDayExchangeRateData = await foreignExchangeRepo.getExchangeRateDataByDate(parsedParams.date);
 
 		let result = "";
-		const inDayExchangeRateData = dataStore[parsedParams.date]
 		if (inDayExchangeRateData == null) {
 			result = `Unable to pull exchange rate data on ${parsedParams.date} `
 			return {
@@ -60,13 +60,13 @@ const currencyConverterTool: McpServerTool = {
 			conversionType = "foreignToMyr"
 
 			exchangeKey = `myr_${lookupCurrency}`
-			exchangeRate = inDayExchangeRateData[exchangeKey]
+			exchangeRate = _.get(inDayExchangeRateData, exchangeKey)!
 		} else {
 			lookupCurrency = targetCurrency.toLowerCase()
 			conversionType = "myrToForeign"
 
 			exchangeKey = `myr_${lookupCurrency}`
-			exchangeRate = inDayExchangeRateData[exchangeKey]
+			exchangeRate = _.get(inDayExchangeRateData, exchangeKey)!
 		}
 
 

@@ -64,23 +64,45 @@ interface DataStore {
 }
 
 
-let dataStore: DataStore = {}
 
-const getExchangeRateData = async (uri: URL): Promise<DataStore> => {
-	if (Object.keys(dataStore).length > 0) {
-		return dataStore;
-	}
+interface RepositoryState {
+	store: DataStore
+}
 
+let repositoryState = {
+	store: {}
+}
 
-	const dataGovExchangeRateResponse = await fetch(uri)
+const EXCHANGE_RATE_DATA_URI = URL.parse("https://api.data.gov.my/data-catalogue/?id=exchangerates")!
+
+const initExchangeRateData = async (): Promise<DataStore> => {
+	const dataGovExchangeRateResponse = await fetch(EXCHANGE_RATE_DATA_URI)
 	const dataGovExchangeRateResponseBody = await dataGovExchangeRateResponse.json()
 	const parsedResponse = ForeignExchangeDataResponseSchema.parse(dataGovExchangeRateResponseBody)
 
+	let dataStore: DataStore = {}
 	_.each(parsedResponse, (dataRecord) => {
 		dataStore[dataRecord.date] = ForeignExchangeDataSchema.parse(dataRecord)
 	})
 
+	console.log(dataStore);
 	return dataStore
 }
 
-export default { getExchangeRateData }
+const getAllExchangeRate = async (): Promise<DataStore> => {
+
+	if (_.keys(repositoryState.store).length == 0) {
+		let dataStore = await initExchangeRateData()
+		_.assign(repositoryState.store, dataStore)
+	}
+
+	return repositoryState.store
+}
+
+const getExchangeRateDataByDate = async (date: string): Promise<z.infer<typeof ForeignExchangeDataSchema>> => {
+	const allExchangeRateData = await getAllExchangeRate()
+	return allExchangeRateData[date]
+}
+
+
+export default { getAllExchangeRate, getExchangeRateDataByDate }
